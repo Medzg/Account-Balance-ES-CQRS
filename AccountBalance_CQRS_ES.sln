@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.705
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountBalance_CQRS_ES.ConsoleUI", "AccountBalance_CQRS_ES.ConsoleUI\AccountBalance_CQRS_ES.ConsoleUI.csproj", "{0C7680E0-1254-4775-B36D-4915B36A9A4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountBalance_CQRS_ES.Domain", "AccountBalance_CQRS_ES.Domain\AccountBalance_CQRS_ES.Domain.csproj", "{7E7C8925-1276-4A0C-9F46-78FEB1E891AD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C7680E0-1254-4775-B36D-4915B36A9A4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C7680E0-1254-4775-B36D-4915B36A9A4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C7680E0-1254-4775-B36D-4915B36A9A4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C7680E0-1254-4775-B36D-4915B36A9A4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E7C8925-1276-4A0C-9F46-78FEB1E891AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E7C8925-1276-4A0C-9F46-78FEB1E891AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E7C8925-1276-4A0C-9F46-78FEB1E891AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E7C8925-1276-4A0C-9F46-78FEB1E891AD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3167000B-AFF3-40DC-A5ED-B01E57190070}
+	EndGlobalSection
+EndGlobal
