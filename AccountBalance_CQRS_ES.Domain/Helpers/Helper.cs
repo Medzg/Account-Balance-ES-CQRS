@@ -46,6 +46,9 @@ namespace AccountBalance_CQRS_ES.Domain.Helpers
             {
                 return JsonConvert.DeserializeObject<CashWithdrawnEventHandler>(value).Events;
             }
+            if (CheckType(data.EventType, nameof(AccountUnblocked))){
+                return JsonConvert.DeserializeObject<AccountUnblockedEventHandler>(value).Events;
+            }
             return null;
         }
         private static bool CheckType(string StreamEventType ,string EventType)

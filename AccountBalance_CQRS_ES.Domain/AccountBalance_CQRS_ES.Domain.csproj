@@ -66,6 +66,7 @@
     <Compile Include="EStore\EventStore.cs" />
     <Compile Include="EStore\IEventStore.cs" />
     <Compile Include="EventHandlers\AccountBlockedEventHandler.cs" />
+    <Compile Include="EventHandlers\AccountUnblockedEventHandler.cs" />
     <Compile Include="EventHandlers\CashDepositedHandler.cs" />
     <Compile Include="EventHandlers\CashWithdrawnEventHandler.cs" />
     <Compile Include="EventHandlers\CreateAccountHandler.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="EventHandlers\OverdraftLimitChangedEventHandler.cs" />
     <Compile Include="Events\AccountBlocked.cs" />
     <Compile Include="Events\AccountCreated.cs" />
+    <Compile Include="Events\AccountUnblocked.cs" />
     <Compile Include="Events\CashDeposited.cs" />
     <Compile Include="Events\CashWithdrawn.cs" />
     <Compile Include="Events\DailyWireTransferLimitChanged.cs" />

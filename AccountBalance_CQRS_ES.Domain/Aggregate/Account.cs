@@ -56,6 +56,11 @@ namespace AccountBalance_CQRS_ES.Domain.Aggregate
             AccountState = State.blocked;
         }
 
+        private void Apply(AccountUnblocked @event)
+        {
+            AccountState = State.unblocked;
+        }
+
         private void Apply(CashWithdrawn @event)
         {
             this.Debt -= @event.Amount;
@@ -69,6 +74,7 @@ namespace AccountBalance_CQRS_ES.Domain.Aggregate
             this.RegisterAppliers<OverdraftLimitChanged>(this.Apply);
             this.RegisterAppliers<AccountBlocked>(this.Apply);
             this.RegisterAppliers<CashWithdrawn>(this.Apply);
+            this.RegisterAppliers<AccountUnblocked>(this.Apply);
         }
         public static Account Create(Guid AccountId, string accountName)
         {
@@ -100,7 +106,7 @@ namespace AccountBalance_CQRS_ES.Domain.Aggregate
 
             if (AccountState == State.blocked && (Debt + amount) >= 0)
             {
-                // need to raise aacount unblokced
+                this.ApplyChanges(new AccountUnblocked(this.Id));
             }
         }
 
