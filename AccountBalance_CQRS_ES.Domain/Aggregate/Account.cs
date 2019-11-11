@@ -65,6 +65,11 @@ namespace AccountBalance_CQRS_ES.Domain.Aggregate
         {
             this.Debt -= @event.Amount;
         }
+        private void Apply(WireTransfered @event)
+        {
+            this.Debt -= @event.Amount;
+            this.WithDrawnToday += @event.Amount;
+        }
 
         protected override void RegisterAppliers()
         {
@@ -75,7 +80,10 @@ namespace AccountBalance_CQRS_ES.Domain.Aggregate
             this.RegisterAppliers<AccountBlocked>(this.Apply);
             this.RegisterAppliers<CashWithdrawn>(this.Apply);
             this.RegisterAppliers<AccountUnblocked>(this.Apply);
+            this.RegisterAppliers<WireTransfered>(this.Apply);
         }
+
+      
         public static Account Create(Guid AccountId, string accountName)
         {
             return new Account(AccountId, accountName);
@@ -128,6 +136,24 @@ namespace AccountBalance_CQRS_ES.Domain.Aggregate
 
         }
       
-       
+       public void WireTransfert(decimal amount)
+        {
+            if (amount <= 0)
+                throw new InvalidOperationException("Can't transfer a negative amount");
+            if (AccountState == State.blocked)
+                throw new InvalidOperationException("Can't transfer an amount while the account is blocked");
+            if (_dailyWireTransferLimit <= WithDrawnToday + amount) { 
+                this.ApplyChanges(new AccountBlocked(this.Id));
+                throw new InvalidOperationException(string.Format("You can't pass your daily wire transfert limit : {0} . Now your account is blocked", _dailyWireTransferLimit));
+                
+            }
+            else
+                this.ApplyChanges(new WireTransfered(this.Id, amount));
+            
+
+
+
+
+        }
     }
 }

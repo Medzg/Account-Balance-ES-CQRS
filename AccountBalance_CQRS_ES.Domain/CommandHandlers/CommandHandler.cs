@@ -14,7 +14,8 @@ namespace AccountBalance_CQRS_ES.Domain.CommandHandlers
         ICommandHandler<SetDailyWireTransferLimitCommand>,
         ICommandHandler<DepositeCashCommand>,
         ICommandHandler<SetOverdraftLimitCommand>,
-        ICommandHandler<WithdrawCashCommand>
+        ICommandHandler<WithdrawCashCommand>,
+        ICommandHandler<WireTransferCommand>
     {
         private readonly IRepository _repo;
         public CommandHandler(IRepository repository)
@@ -52,6 +53,11 @@ namespace AccountBalance_CQRS_ES.Domain.CommandHandlers
         public async Task Handle(WithdrawCashCommand cmd)
         {
             await Execute(cmd.AccountId, (account) => account.WithdrawCash(cmd.Amount));
+        }
+
+        public async Task Handle(WireTransferCommand cmd)
+        {
+          await Execute(cmd.AccountId, (account) => account.WireTransfert(cmd.Amount));
         }
     }
 }

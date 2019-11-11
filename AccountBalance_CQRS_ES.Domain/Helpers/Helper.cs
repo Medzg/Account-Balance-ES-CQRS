@@ -49,6 +49,10 @@ namespace AccountBalance_CQRS_ES.Domain.Helpers
             if (CheckType(data.EventType, nameof(AccountUnblocked))){
                 return JsonConvert.DeserializeObject<AccountUnblockedEventHandler>(value).Events;
             }
+            if (CheckType(data.EventType, nameof(WireTransfered)))
+            {
+                return JsonConvert.DeserializeObject<WireTransferedEventHandler>(value).Events;
+            }
             return null;
         }
         private static bool CheckType(string StreamEventType ,string EventType)

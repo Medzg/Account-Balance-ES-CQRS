@@ -62,6 +62,7 @@
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\SetDailyWireTransferLimitCommand.cs" />
     <Compile Include="Commands\SetOverdraftLimit.cs" />
+    <Compile Include="Commands\WireTransferCommand.cs" />
     <Compile Include="Commands\WithdrawCashCommand.cs" />
     <Compile Include="EStore\EventStore.cs" />
     <Compile Include="EStore\IEventStore.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="EventHandlers\IEventHandler.cs" />
     <Compile Include="EventHandlers\DailyWireTransferLimitChangedEventHandler.cs" />
     <Compile Include="EventHandlers\OverdraftLimitChangedEventHandler.cs" />
+    <Compile Include="EventHandlers\WireTransferedEventHandler.cs" />
     <Compile Include="Events\AccountBlocked.cs" />
     <Compile Include="Events\AccountCreated.cs" />
     <Compile Include="Events\AccountUnblocked.cs" />
@@ -82,6 +84,7 @@
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Events\OverdraftLimitChanged.cs" />
+    <Compile Include="Events\Wiretransfered.cs" />
     <Compile Include="Helpers\EventStoreStream.cs" />
     <Compile Include="Helpers\Helper.cs" />
     <Compile Include="Helpers\StreamIdentifier.cs" />
