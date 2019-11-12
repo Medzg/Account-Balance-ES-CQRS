@@ -35,8 +35,8 @@ namespace AccountBalance_CQRS_ES.ConsoleUI
             IEventStore eventStore = new EventStore();
             IRepository repository = new Repository(eventStore);
             CommandHandler commandHandler = new CommandHandler(repository);
-            WithdrawCashCommand withdrawCash = new WithdrawCashCommand(accountId,0);
-            await commandHandler.Handle(withdrawCash);
+            DepositeCashCommand depositeCash = new DepositeCashCommand(accountId, 500);
+            await commandHandler.Handle(depositeCash);
         
            
                 

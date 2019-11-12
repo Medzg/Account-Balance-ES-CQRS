@@ -11,12 +11,12 @@ namespace AccountBalance_CQRS_ES.Domain.Commands
         public Guid Id { get; private set; } = Guid.NewGuid();
 
         public Guid AccountId { get; }
-        public decimal OverdraftLmit { get; }
+        public decimal Amount { get; }
 
-        public SetDailyWireTransferLimitCommand(Guid accountId, decimal overdraftLimit)
+        public SetDailyWireTransferLimitCommand(Guid accountId, decimal amount)
         {
             AccountId = accountId;
-            OverdraftLmit = overdraftLimit;
+            Amount = amount;
         }
     }
 }

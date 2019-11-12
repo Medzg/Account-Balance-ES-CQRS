@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountBalance_CQRS_ES.Cons
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountBalance_CQRS_ES.Domain", "AccountBalance_CQRS_ES.Domain\AccountBalance_CQRS_ES.Domain.csproj", "{7E7C8925-1276-4A0C-9F46-78FEB1E891AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountBalance_CQRS_ES.Test", "AccountBalance_CQRS_ES.Test\AccountBalance_CQRS_ES.Test.csproj", "{8A0CB3F9-2D85-44A2-8BE8-8DA6D5B8ACE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{7E7C8925-1276-4A0C-9F46-78FEB1E891AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E7C8925-1276-4A0C-9F46-78FEB1E891AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E7C8925-1276-4A0C-9F46-78FEB1E891AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A0CB3F9-2D85-44A2-8BE8-8DA6D5B8ACE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A0CB3F9-2D85-44A2-8BE8-8DA6D5B8ACE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A0CB3F9-2D85-44A2-8BE8-8DA6D5B8ACE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A0CB3F9-2D85-44A2-8BE8-8DA6D5B8ACE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

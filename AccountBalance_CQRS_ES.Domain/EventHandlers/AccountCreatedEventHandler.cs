@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AccountBalance_CQRS_ES.Domain.EventHandlers
 {
-    public class CreateAccountHandler : IEventHandler<AccountCreated>
+    public class AccountCreatedEventHandler : IEventHandler<AccountCreated>
     {
         public string Id { get; set; }
         public List<AccountCreated> Events { get; set; }

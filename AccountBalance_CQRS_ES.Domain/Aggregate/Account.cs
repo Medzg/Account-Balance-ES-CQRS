@@ -27,6 +27,10 @@ namespace AccountBalance_CQRS_ES.Domain.Aggregate
        
         private Account(Guid accountId, string accountName)
         {
+            if (accountId == null || Guid.Empty == accountId)
+                throw new InvalidOperationException("You can't create account without account Id");
+            if (string.IsNullOrEmpty(accountName))
+                throw new InvalidOperationException("you can't create account without account name");
             this.ApplyChanges(new AccountCreated(accountId, accountName));
         }
         private void Apply(AccountCreated @event)
@@ -70,8 +74,14 @@ namespace AccountBalance_CQRS_ES.Domain.Aggregate
             this.Debt -= @event.Amount;
             this.WithDrawnToday += @event.Amount;
         }
+        private void Apply(ChequeDeposited @event)
+        {
+            TimeSpan ts = new TimeSpan(09, 00, 0);
+            if (@event.TranscationDate >= DateTime.UtcNow.Date + ts)
+                Debt += @event.Amount;
+        }
 
-        protected override void RegisterAppliers()
+        protected  override void RegisterAppliers()
         {
             this.RegisterAppliers<AccountCreated>(this.Apply);
             this.RegisterAppliers<DailyWireTransferLimitChanged>(this.Apply);
@@ -81,6 +91,7 @@ namespace AccountBalance_CQRS_ES.Domain.Aggregate
             this.RegisterAppliers<CashWithdrawn>(this.Apply);
             this.RegisterAppliers<AccountUnblocked>(this.Apply);
             this.RegisterAppliers<WireTransfered>(this.Apply);
+            this.RegisterAppliers<ChequeDeposited>(this.Apply);
         }
 
       
@@ -124,9 +135,10 @@ namespace AccountBalance_CQRS_ES.Domain.Aggregate
                 throw new InvalidOperationException("Can't withdraw a negative amount of cash");
             if (AccountState == State.blocked)
                 throw new InvalidOperationException("Can't withdraw, your account is temporarily locked ");
-            if(Debt - amount < 0 && (Debt-amount) > -_overdraftLimit)
+            if((Debt - amount) < 0 &&  Math.Abs(Debt-amount) > _overdraftLimit)
             {
                 this.ApplyChanges(new AccountBlocked(this.Id));
+                throw new InvalidOperationException("you pass your overdraftLimit, now your account is locked ");
             }
             else
             {
@@ -154,6 +166,14 @@ namespace AccountBalance_CQRS_ES.Domain.Aggregate
 
 
 
+        }
+        public void DepositCheque(decimal amount)
+        {
+            if (amount <= 0)
+                throw new InvalidOperationException("can't deposite a negative amount of cheque");
+            var date = DateTime.Now;
+            var transactionDate = Helpers.Helper.GetNextBusinessDay(date);
+            this.ApplyChanges(new ChequeDeposited(this.Id, amount, transactionDate));
         }
     }
 }

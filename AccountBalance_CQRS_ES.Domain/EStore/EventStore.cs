@@ -17,7 +17,13 @@ namespace AccountBalance_CQRS_ES.Domain.EStore
 
         public EventStore()
         {
+            try { 
+
             connect();
+            }catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private async void connect()
@@ -32,7 +38,7 @@ namespace AccountBalance_CQRS_ES.Domain.EStore
             if (streamId == null || string.IsNullOrWhiteSpace(streamId.Value))
                 throw new InvalidOperationException("stream Id is required");
             var result = await _connection.ReadStreamEventsForwardAsync(streamId.Value, StreamPosition.Start, 1000,false);
-            if(result != null)
+            if(result != null && result.Status == SliceReadStatus.Success)
             {
                 List<IEvent> res = GetEvents(result);
                 return res;

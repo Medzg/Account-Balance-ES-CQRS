@@ -12,6 +12,26 @@ namespace AccountBalance_CQRS_ES.Domain.Helpers
 {
    public static class Helper
     {
+        public static DateTime GetNextBusinessDay(this DateTime date)
+        {
+            TimeSpan ts = new TimeSpan(09, 00, 0);
+            if (date.DayOfWeek >= DayOfWeek.Monday && date.DayOfWeek < DayOfWeek.Friday
+               && date.Hour >= DateTime.Parse("09:00").Hour &&
+               date.Hour <= DateTime.Parse("17:00").Hour)
+            {
+                DateTime bday = DateTime.UtcNow.AddDays(1).Date + ts;
+                return date + bday.Subtract(date);
+            }
+
+            if (date.DayOfWeek == DayOfWeek.Friday
+               && date.Hour >= DateTime.Parse("09:00").Hour && date.Hour <= DateTime.Parse("17:00").Hour)
+                return DateTime.UtcNow.AddDays(3).Date + ts;
+            if (date.DayOfWeek == DayOfWeek.Saturday)
+                return DateTime.UtcNow.AddDays(2).Date + ts;
+            else
+
+                return DateTime.UtcNow.AddDays(1).Date + ts;
+        }
         public static EventData AsJson(EventStoreStream value)
         {
             if (value == null) throw new ArgumentNullException("value");
@@ -24,42 +44,31 @@ namespace AccountBalance_CQRS_ES.Domain.Helpers
         {
             if (data == null) throw new ArgumentNullException("data");
             var value = Encoding.UTF8.GetString(data.Data);
-            if (CheckType(data.EventType,nameof(AccountCreated)))
+            switch (data.EventType)
             {
-
-                return JsonConvert.DeserializeObject<CreateAccountHandler>(value).Events;
-
+                case nameof(AccountCreated): return JsonConvert.DeserializeObject<AccountCreatedEventHandler>(value).Events;
+                case nameof(DailyWireTransferLimitChanged): return JsonConvert.DeserializeObject<DailyWireTransferLimitChangedEventHandler>(value).Events;
+                case nameof(CashDeposited): return JsonConvert.DeserializeObject<CashDepositedHandler>(value).Events;
+                case nameof(OverdraftLimitChanged): return JsonConvert.DeserializeObject<OverdraftLimitChangedEventHandler>(value).Events;
+                case nameof(AccountBlocked): return JsonConvert.DeserializeObject<AccountBlockedEventHandler>(value).Events;
+                case nameof(CashWithdrawn): return JsonConvert.DeserializeObject<CashWithdrawnEventHandler>(value).Events;
+                case nameof(AccountUnblocked): return JsonConvert.DeserializeObject<AccountUnblockedEventHandler>(value).Events;
+                case nameof(WireTransfered): return JsonConvert.DeserializeObject<WireTransferedEventHandler>(value).Events;
+                case nameof(ChequeDeposited): return JsonConvert.DeserializeObject<ChequeDepositedEventHandler>(value).Events;
+                default: return null;
+                    
             }
-            if (CheckType(data.EventType,nameof(DailyWireTransferLimitChanged)))
-            {
-                return JsonConvert.DeserializeObject<DailyWireTransferLimitChangedEventHandler>(value).Events;
-            }
-            if (CheckType(data.EventType, nameof(CashDeposited)))
-            { return JsonConvert.DeserializeObject<CashDepositedHandler>(value).Events; }
-            if(CheckType(data.EventType,nameof(OverdraftLimitChanged)))
-            { return JsonConvert.DeserializeObject<OverdraftLimitChangedEventHandler>(value).Events; }
-            if (CheckType(data.EventType, nameof(AccountBlocked)))
-            {
-                return JsonConvert.DeserializeObject<AccountBlockedEventHandler>(value).Events;
-            }
-            if (CheckType(data.EventType, nameof(CashWithdrawn)))
-            {
-                return JsonConvert.DeserializeObject<CashWithdrawnEventHandler>(value).Events;
-            }
-            if (CheckType(data.EventType, nameof(AccountUnblocked))){
-                return JsonConvert.DeserializeObject<AccountUnblockedEventHandler>(value).Events;
-            }
-            if (CheckType(data.EventType, nameof(WireTransfered)))
-            {
-                return JsonConvert.DeserializeObject<WireTransferedEventHandler>(value).Events;
-            }
-            return null;
+          
+            
+           
+  
+          
+         
+       
         }
-        private static bool CheckType(string StreamEventType ,string EventType)
-        {
-            if (StreamEventType.Equals(EventType)) return true;
-            return false;
-
-        }
+     
     }
+
+
+   
 }
