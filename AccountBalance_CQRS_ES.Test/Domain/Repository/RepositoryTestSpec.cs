@@ -15,6 +15,7 @@ namespace AccountBalance_CQRS_ES.Test.Domain.Repository
 {
    public class RepositoryTestSpec
     {
+        
 
         [Fact]
 
@@ -30,37 +31,45 @@ namespace AccountBalance_CQRS_ES.Test.Domain.Repository
             };
             Myrepo.IRepository repo = new Myrepo.Repository(mockEventSotre.Object);
             mockEventSotre.Setup(x => x.GetByStreamId(It.IsAny<StreamIdentifier>())).Returns(Task.FromResult<IEnumerable<IEvent>>(events));
-
             var account = await repo.GetById<Account>(accountId);
-
-
             Assert.Equal("Med", account.AccountName);
+            Assert.Equal(200, account.Debt);
 
         }
 
         [Fact]
 
-        public async void id_not_excited_should_throw_exception()
+        public async Task id_not_excited_should_throw_exception()
         {
-            Myrepo.IRepository repo = new Myrepo.Repository(Setup());
-            var accountId = Guid.Parse("1405FB93-2A90-4C9C-B286-EE9A62A94212");
-
-
-
             
-
-           await Assert.ThrowsAsync<InvalidOperationException>(()=> repo.GetById<Account>(accountId));
+            Mock<IEventStore> mockEventSotre = new Mock<IEventStore>();
+            var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
+            mockEventSotre.Setup(x => x.GetByStreamId(It.IsAny<StreamIdentifier>())).Throws<InvalidOperationException>();
+            Myrepo.IRepository repo = new Myrepo.Repository(mockEventSotre.Object);
+            await Assert.ThrowsAsync<InvalidOperationException>(()=> repo.GetById<Account>(accountId));
 
         }
 
      
 
-  
-        private IEventStore Setup()
+        [Fact]
+        public async Task Save_should_be_called_once()
         {
-            return new EventStore();
+            var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
+            Mock<IEventStore> mockEventSotre = new Mock<IEventStore>();
+            mockEventSotre.Setup(x => x.Save(It.IsAny<List<EventStoreStream>>()));
 
+            Myrepo.IRepository repo = new Myrepo.Repository(mockEventSotre.Object);
+            var account = Account.Create(accountId, "Med");
+           
+            await repo.Save(account);
+            
+            mockEventSotre.Verify(x => x.Save(It.IsAny<List<EventStoreStream>>()), Times.Once);
+   
         }
+
+  
+      
     }
 
 
