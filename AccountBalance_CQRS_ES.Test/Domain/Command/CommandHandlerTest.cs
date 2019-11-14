@@ -19,22 +19,25 @@ namespace AccountBalance_CQRS_ES.Test.Domain.Command
         [Fact]
         public async Task add_debt_to_account_should_update_account_debt_amount()
         {
-
+            #region Arrange
             var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
             Account account = GetAccount();
             // setup the object that's need to return in every call of get object
             var repo = new Mock<Myrepo.IRepository>();
             repo.Setup(x => x.GetById<Account>(It.IsAny<Guid>())).Returns(Task.FromResult(account));
             CommandHandler commandHandler = new CommandHandler(repo.Object);
-
+            #endregion
+            #region Act
             await commandHandler.Handle(new DepositeCashCommand(accountId, 200));
+            #endregion
 
-
+            #region Assert
             Assert.Equal(200, account.Debt);
-    
+            #endregion
+
         }
 
-       
+
         [Theory]
         [InlineData(0)]
         [InlineData(-10)]
