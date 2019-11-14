@@ -14,34 +14,24 @@ namespace AccountBalance_CQRS_ES.Test.Domain.Command
 {
      public class CommandHandlerTest
     {
-      /* [Fact]
-        public async Task create_account_command_should_create_an_accountAsync()
-        {
-            var commandHandler = setup();
-            var accountId = Guid.Parse("1305FB93-2A90-4C9C-B286-EE9A62A94212");
-            CreateAccountCommand createAccount = new CreateAccountCommand(accountId, "Mohamed Zghal");
-            await commandHandler.Handle(createAccount);
-
-           var account = await GetAccount(accountId);
-            Assert.Equal("Mohamed Zghal", account.AccountName);
-           
-        }*/
+              
+        
         [Fact]
         public async Task add_debt_to_account_should_update_account_debt_amount()
         {
 
             var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
             Account account = GetAccount();
-
+            // setup the object that's need to return in every call of get object
             var repo = new Mock<Myrepo.IRepository>();
             repo.Setup(x => x.GetById<Account>(It.IsAny<Guid>())).Returns(Task.FromResult(account));
             CommandHandler commandHandler = new CommandHandler(repo.Object);
-
 
             await commandHandler.Handle(new DepositeCashCommand(accountId, 200));
 
 
             Assert.Equal(200, account.Debt);
+    
         }
 
        
@@ -51,14 +41,19 @@ namespace AccountBalance_CQRS_ES.Test.Domain.Command
 
         public async Task add_negative_amount_debt_to_account_should_update_account_debt_amount(decimal amount)
         {
+            #region Arrange
+
             var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
             Account account = GetAccount();
             var repo = new Mock<Myrepo.IRepository>();
             repo.Setup(x => x.GetById<Account>(It.IsAny<Guid>())).Returns(Task.FromResult(account));
             CommandHandler commandHandler = new CommandHandler(repo.Object);
-
             DepositeCashCommand depositeCash = new DepositeCashCommand(accountId, amount);
+            #endregion
+
+            #region Act and Assert cause call async
             await Assert.ThrowsAnyAsync<InvalidOperationException>(() => commandHandler.Handle(depositeCash));
+            #endregion
         }
         [Fact]
         public async Task WithdrawCash_command_need_update_debt_ammountAsync()
