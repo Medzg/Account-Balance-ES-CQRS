@@ -23,18 +23,24 @@ namespace AccountBalance_CQRS_ES.Test.Domain.Repository
         {
             var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
             Mock<IEventStore> mockEventSotre = new Mock<IEventStore>();
-            List<IEvent> events = new List<IEvent>()
+          
+            Myrepo.IRepository repo = new Myrepo.Repository(mockEventSotre.Object);
+            mockEventSotre.Setup(x => x.GetByStreamId(It.IsAny<StreamIdentifier>())).Returns(Task.FromResult<IEnumerable<IEvent>>(GetEvents()));
+            var account = await repo.GetById<Account>(accountId);
+            Assert.Equal("Med", account.AccountName);
+            Assert.Equal(200, account.Debt);
+
+        }
+
+       private List<IEvent> GetEvents()
+        {
+           var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
+            return  new List<IEvent>()
             {
                 new AccountCreated(accountId,"Med"),
                 new CashDeposited(accountId,200)
 
             };
-            Myrepo.IRepository repo = new Myrepo.Repository(mockEventSotre.Object);
-            mockEventSotre.Setup(x => x.GetByStreamId(It.IsAny<StreamIdentifier>())).Returns(Task.FromResult<IEnumerable<IEvent>>(events));
-            var account = await repo.GetById<Account>(accountId);
-            Assert.Equal("Med", account.AccountName);
-            Assert.Equal(200, account.Debt);
-
         }
 
         [Fact]

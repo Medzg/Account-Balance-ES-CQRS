@@ -10,6 +10,7 @@ namespace AccountBalance_CQRS_ES.Domain.EStore
 {
    public interface IEventStore
     {
+         
         Task<IEnumerable<IEvent>> GetByStreamId(StreamIdentifier streamId);
 
         Task Save(List<EventStoreStream> newEvents);

@@ -16,6 +16,9 @@ namespace AccountBalance_CQRS_ES.Domain.Repository
         {
             _eventStore = eventStore;
         }
+
+       
+
         public async Task<T> GetById<T>(Guid id) where T : AggregateRoot, new()
         {
             var streamItem = new T();

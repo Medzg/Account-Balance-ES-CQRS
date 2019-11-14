@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using AccountBalance_CQRS_ES.Domain.Commands;
 using AccountBalance_CQRS_ES.Domain.Aggregate;
 using Xunit;
+using Moq;
+using System.Collections.Generic;
+using AccountBalance_CQRS_ES.Domain.Events;
 
 namespace AccountBalance_CQRS_ES.Test.Domain.Command
 {
@@ -27,15 +30,18 @@ namespace AccountBalance_CQRS_ES.Test.Domain.Command
         public async Task add_debt_to_account_should_update_account_debt_amount()
         {
 
-            var commandHandler = setup();
-            var accountId = Guid.Parse("1305FB93-2A90-4C9C-B286-EE9A62A94212");
-            var CurrentState = await GetAccount(accountId);
-            var currentDebt = CurrentState.Debt;
-            DepositeCashCommand depositeCash = new DepositeCashCommand(accountId, 200);
+            var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
+            Account account = GetAccount();
 
-            await commandHandler.Handle(depositeCash);
-            CurrentState = await GetAccount(accountId);
-            Assert.Equal(currentDebt + 200, CurrentState.Debt);
+            var repo = new Mock<Myrepo.IRepository>();
+            repo.Setup(x => x.GetById<Account>(It.IsAny<Guid>())).Returns(Task.FromResult(account));
+            CommandHandler commandHandler = new CommandHandler(repo.Object);
+
+
+            await commandHandler.Handle(new DepositeCashCommand(accountId, 200));
+
+
+            Assert.Equal(200, account.Debt);
         }
 
        
@@ -45,25 +51,39 @@ namespace AccountBalance_CQRS_ES.Test.Domain.Command
 
         public async Task add_negative_amount_debt_to_account_should_update_account_debt_amount(decimal amount)
         {
-            var commandHandler = setup();
-            var accountId = Guid.Parse("1305FB93-2A90-4C9C-B286-EE9A62A94212");
-            DepositeCashCommand depositeCash = new DepositeCashCommand(accountId, amount);
+            var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
+            Account account = GetAccount();
+            var repo = new Mock<Myrepo.IRepository>();
+            repo.Setup(x => x.GetById<Account>(It.IsAny<Guid>())).Returns(Task.FromResult(account));
+            CommandHandler commandHandler = new CommandHandler(repo.Object);
 
+            DepositeCashCommand depositeCash = new DepositeCashCommand(accountId, amount);
             await Assert.ThrowsAnyAsync<InvalidOperationException>(() => commandHandler.Handle(depositeCash));
         }
         [Fact]
         public async Task WithdrawCash_command_need_update_debt_ammountAsync()
         {
+            #region Arrange
+            var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
+            Account account = GetAccount();
+            var repo = new Mock<Myrepo.IRepository>();
+            repo.Setup(x => x.GetById<Account>(It.IsAny<Guid>())).Returns(Task.FromResult(account));
+            CommandHandler commandHandler = new CommandHandler(repo.Object);
+            await commandHandler.Handle(new DepositeCashCommand(accountId, 200));
 
-            var commandhandler = setup();
-            var accountId = Guid.Parse("1305FB93-2A90-4C9C-B286-EE9A62A94212");
-            var account = await GetAccount(accountId);
-            var currentDebt = account.Debt;
+            #endregion
+
+
+            #region Act
             WithdrawCashCommand withdrawCash = new WithdrawCashCommand(accountId, 200);
-            await commandhandler.Handle(withdrawCash);
-            account = await GetAccount(accountId);
-            Assert.Equal(currentDebt-200,account.Debt);
 
+            await commandHandler.Handle(withdrawCash);
+            #endregion
+
+
+            #region Assert
+            Assert.Equal(0,account.Debt);
+            #endregion
         }
 
         [Theory]
@@ -72,23 +92,39 @@ namespace AccountBalance_CQRS_ES.Test.Domain.Command
         public async Task WithdrawCash_command_thorw_exception_when_amount_is_negative_or0(decimal amount)
         {
 
-            var commandhandler = setup();
-            var accountId = Guid.Parse("1305FB93-2A90-4C9C-B286-EE9A62A94212");
-            var account = await GetAccount(accountId);
+            #region Arrange
+            var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
+            Account account = GetAccount();
+            var repo = new Mock<Myrepo.IRepository>();
+            repo.Setup(x => x.GetById<Account>(It.IsAny<Guid>())).Returns(Task.FromResult(account));
+            CommandHandler commandHandler = new CommandHandler(repo.Object);
+            await commandHandler.Handle(new DepositeCashCommand(accountId, 200));
             WithdrawCashCommand withdrawCash = new WithdrawCashCommand(accountId, amount);
-            await Assert.ThrowsAsync<InvalidOperationException>(() => commandhandler.Handle(withdrawCash));
+            #endregion
+      
+            #region Act and Assert cause call async
 
+            await Assert.ThrowsAsync<InvalidOperationException>(() => commandHandler.Handle(withdrawCash));
+            #endregion
         }
 
 
         [Fact]
         public async Task set_wire_transfer_limit_command_should_thorw_excption_if_set_negativeAsync()
         {
-            var commandhandler = setup();
-            var accountId = Guid.Parse("1305FB93-2A90-4C9C-B286-EE9A62A94212");
-            SetDailyWireTransferLimitCommand setDailyWireTransferLimit = new SetDailyWireTransferLimitCommand(accountId, -100);
+            #region Arrange
+            var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
+            Account account = GetAccount();
+            var repo = new Mock<Myrepo.IRepository>();
+            repo.Setup(x => x.GetById<Account>(It.IsAny<Guid>())).Returns(Task.FromResult(account));
+            CommandHandler commandHandler = new CommandHandler(repo.Object);
 
-            await Assert.ThrowsAsync<InvalidOperationException>(() => commandhandler.Handle(setDailyWireTransferLimit));
+            SetDailyWireTransferLimitCommand setDailyWireTransferLimit = new SetDailyWireTransferLimitCommand(accountId, -100);
+            #endregion
+
+            #region Act and Assert cause call async
+            await Assert.ThrowsAsync<InvalidOperationException>(() => commandHandler.Handle(setDailyWireTransferLimit));
+            #endregion
         }
         [Fact]
         public async Task set_overdraft_limit_command_should_thorw_excption_if_set_negativeAsync()
@@ -132,6 +168,14 @@ namespace AccountBalance_CQRS_ES.Test.Domain.Command
           await  Assert.ThrowsAsync<InvalidOperationException>(() => commandhandler.Handle(wireTransfer));
         }
 
+
+        
+
+        private Account GetAccount()
+        {
+            var accountId = Guid.Parse("1805FB93-2A90-4C9C-B286-EE9A62A94212");
+            return Account.Create(accountId, "Med");
+        }
 
         private CommandHandler setup()
         {
